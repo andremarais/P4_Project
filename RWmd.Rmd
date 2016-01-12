@@ -209,7 +209,7 @@ I'm curious to see how the sulphate and alcohol levels affect the quality of the
 </br>
 
 
-### <span style="color:DodgerBlue;">Bivariate Plots Section</span>
+### <span style="color:DodgerBlue;">Bivariate Plots</span>
 </br>
 ```{r, echo = F, message=FALSE, warning=FALSE, }
 library(corrplot)
@@ -242,10 +242,23 @@ ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
   ggtitle('Quality vs Alcohol')
 ```
 </br>
-Note the amount of outliers (red) for wine which has a quality rating of 5. This will need some further investigation.
+Note the amount of outliers (red dots) for wine which has a quality rating of 5. 
 </br>
 ```{r, echo = F, message=FALSE}
-ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),y = volatile.acidity), 
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality), 
+                              y = sulphates), 
+                          outlier.colour ='firebrick1',
+                          col = 'dodgerblue3',
+                          fill = 'dodgerblue1') + 
+  plot.theme + xlab('Quality') + 
+  ggtitle('Quality vs Alcohol')
+```
+</br>
+Once again a lot of outliers with wine which has a quality rating of 5.
+</br>
+```{r, echo = F, message=FALSE}
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
+                              y = volatile.acidity), 
                           outlier.colour ='firebrick1',
                           col = 'dodgerblue3', 
                           fill = 'dodgerblue1') + 
@@ -253,15 +266,27 @@ ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),y = volatile.acidity),
   ggtitle('Quality vs Volatile acidity')
 ```
 </br>
-Once again there seems to be quite a few outliers with higher quality wines. 
+And again, there seems to be quite a few outliers with higher quality wines. 
+</br>
+```{r, echo = F, message=FALSE}
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
+                              y = density), 
+                          outlier.colour ='firebrick1',
+                          col = 'dodgerblue3', 
+                          fill = 'dodgerblue1') + 
+  plot.theme + xlab('Quality') + 
+  ggtitle('Quality vs Volatile acidity')
+```
+</br>
+No clear link between quality and density.
 </br>
 ```{r, echo = F, message=FALSE}
 
 ggplot(rw) + 
-  geom_point(aes(x = density, y = alcohol),
+  geom_point(aes(x = density, 
+                 y = alcohol),
              col = 'dodgerblue3') + 
   plot.theme + 
-  xlab('Quality') + 
   ggtitle('Density vs alcohol') +
   geom_smooth(aes(x = density, y = alcohol), 
               method = "lm", 
@@ -274,12 +299,13 @@ The straight line is regression line, the descending slope shows the negative co
 </br>
 ```{r, echo = F, message=FALSE}
 ggplot(rw) + 
-  geom_point(aes(x = density, y = fixed.acidity),
+  geom_point(aes(x = density, 
+                 y = fixed.acidity),
              col = 'dodgerblue3') + 
   plot.theme + 
-  xlab('Quality') + 
   ggtitle('Density vs fixed acidity') +
-  geom_smooth(aes(x = density, y = fixed.acidity), 
+  geom_smooth(aes(x = density, 
+                  y = fixed.acidity), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
@@ -290,12 +316,13 @@ In this case the ascending regression line show the positive correlation between
 </br>
 ```{r, echo = F, message=FALSE}
 ggplot(rw) + 
-  geom_point(aes(x = pH, y = fixed.acidity),
+  geom_point(aes(x = pH, 
+                 y = fixed.acidity),
              col = 'dodgerblue3') + 
   plot.theme + 
-  xlab('pH') + 
   ggtitle('pH vs fixed acidity') +
-  geom_smooth(aes(x = pH, y = fixed.acidity), 
+  geom_smooth(aes(x = pH, y = 
+                    fixed.acidity), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
@@ -306,9 +333,9 @@ ggplot(rw) +
   geom_point(aes(x = pH, y = citric.acid),
              col = 'dodgerblue3') + 
   plot.theme + 
-  xlab('pH') + 
   ggtitle('pH vs citric acid') +
-  geom_smooth(aes(x = pH, y = citric.acid), 
+  geom_smooth(aes(x = pH, 
+                  y = citric.acid), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
@@ -316,40 +343,84 @@ ggplot(rw) +
   scale_y_continuous(limits = c(0, max(rw$citric.acid)))
 ```
 </br>
-It shouldn't be a surprise that a lower pH level relates to a higher acidity level. But it's worth checking out at least.
-</br>
-</br>
-I want to focus on quality. What makes a good wine good?
-```{r, echo = F, message=FALSE, warning=F}
-ggplot(rw) + 
-  geom_point(aes(x = alcohol, y = volatile.acidity), col = 'dodgerblue1') + 
-  facet_grid(.~quality) + plot.theme
+
+
+
+### <span style="color:DodgerBlue;">Bivariate analysis</span>
+</br> 
+The quality of the wine increases along with higher alcohol content and lower volatile acidity levels. There are quite a few alcohol outliers with wines having a quality rating of 5. _If_ 5 is the average rating for wine, it wouldn't be too naive to assume that a rating of 5 is the go-to rating for wines where the judge can't place it with confidence. This might be the reason why there is a higher variance with the wine with a rating of 5. Also, higher quality wine have smaller volatile acidity levels. Another thing I found interesting is that the variance of the alcohol content increases with the quality of the wine, while the variance of the volatile acidity decreases with better quality wine. This might be due to the wine makers being slightly indifferent about the alcohol content with their wines, and being more concerned about _making a good wine._
+
+Using a random forest model, you can see what the important variables are to help predict quality. Using 500 trees, with replacement, the top 6 features are as follows:
+```{r, echo = F, message=FALSE, warning=F, cache=T}
+rf.Imp <-randomForest(as.factor(quality) ~ . , data = rw[ ,2:13])
+
+gsub('\\.', ' ',row.names(rf.Imp$importance))[order(rf.Imp$importance, decreasing = T)][1:6]
 ```
 </br>
-It looks the alcohol **variance** is much lower with lower quality wines. 
+The random forest itself: 
+```{r, echo = F, message=FALSE, warning=F, cache=T}
+rf.Imp
+```
+
+
+### <span style="color:DodgerBlue;">Multivariate plots</span>
+
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+ggplot(rw) + 
+  geom_point(aes(x = alcohol, 
+                 y = volatile.acidity), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  plot.theme
+```
+</br>
+It looks the alcohol variance is much lower with lower quality wines. 
 </br>
 ```{r, echo = F, message=FALSE, warning=F}
 tapply(rw$alcohol, rw$quality, summary)
+```
+```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, alcohol ~ quality, FUN = var)
+```
+</br>
+The variance in fact higer with the better quality wines. 
+</br>
+```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, alcohol ~ quality, FUN = var) %>% 
   ggplot() + 
-  geom_line(aes(x = quality, y = alcohol), col = 'dodgerblue3')+
+  geom_line(aes(x = quality, 
+                y = alcohol), 
+            col = 'dodgerblue3',
+            alpha = .25)+
+    geom_point(aes(x = quality, 
+                y = alcohol), 
+            col = 'dodgerblue3')+
   plot.theme +
-  geom_smooth(aes(x = quality, y = alcohol), 
+  geom_smooth(aes(x = quality, 
+                  y = alcohol), 
               se = F, 
               method = 'lm', 
               col = 'firebrick1', 
               size = 1)
 ```
 </br>
-The variance in fact higer with the better quality wines. 
-</br>
 ```{r, echo = F, message=FALSE, warning=F}
 tapply(rw$volatile.acidity, rw$quality, summary)
+```
+```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, volatile.acidity ~ quality, FUN = var)
+```
+```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, volatile.acidity ~ quality, FUN = var) %>% 
   ggplot() + 
-  geom_line(aes(x = quality, y = volatile.acidity), col = 'dodgerblue3')+
+  geom_line(aes(x = quality, 
+                y = volatile.acidity), 
+            col = 'dodgerblue3',
+            alpha = .25)+
+    geom_point(aes(x = quality, 
+                y = volatile.acidity), 
+            col = 'dodgerblue3')+
   plot.theme +
   geom_smooth(aes(x = quality, y = volatile.acidity), 
               se = F, 
@@ -362,40 +433,63 @@ aggregate(data = rw, volatile.acidity ~ quality, FUN = var) %>%
 ggplot(rw) + 
   geom_point(aes(x = density, 
                  y = total.sulfur.dioxide, 
-                 col = as.factor(alcohol.dv))) + 
+                 col = as.factor(alcohol.dv)),
+                 alpha = .35) + 
   scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
-  facet_grid(alcohol.dv ~.) + 
+  facet_grid(quality ~.) + 
   plot.theme + 
   theme(legend.position="none")
 ```
 </br>
-There is a much higher variance in the density with higher percentage alcohol wine
+The two outliers in the second last plot shrinks the results too much, taking then out...
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+# indenting with magrittr is still tricky
+rw %>%
+subset(rw %$%
+         total.sulfur.dioxide < rw %$% 
+         total.sulfur.dioxide %>% 
+         quantile(.975) %>% 
+         as.numeric) %>%
+ggplot() + 
+  geom_point(aes(x = density, 
+                 y = total.sulfur.dioxide, 
+                 col = as.factor(alcohol.dv)),
+             alpha = .35) + 
+  scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
+  facet_grid(quality ~.) + 
+  plot.theme + 
+  theme(legend.position="none")
+```
+</br>
+Blue dots refer to wines with an alcohol level beneath the mode, while red dots are for wines with an alcohol level above the mode. 
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+# indenting with magrittr is still tricky
+rw %>%
+subset(rw %$%
+         total.sulfur.dioxide < rw %$% 
+         total.sulfur.dioxide %>% 
+         quantile(.975) %>% 
+         as.numeric) %>%
+ggplot() + 
+  geom_point(aes(x = density, 
+                 y = total.sulfur.dioxide, 
+                 col = as.factor(ph.dv)),
+             alpha = .35) + 
+  scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
+  facet_grid(quality ~.) + 
+  plot.theme + 
+  theme(legend.position="none")
+```
+</br>
+
 </br>
 ```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, density ~ alcohol.dv, FUN = var)
 ```
 </br>
-Comparing the density and total sulfar dioxide between the wine above and below the mode, you can see the variance of the density is much higher with wines with an alcohol above the mode. 
+Comparing the density and total sulfar dioxide between the wine above and below the mode, you can see the variance of the density is much higher with wines with an alcohol above the mode. The other derived variables unfortunately add no new information.
 
 </br>
-
-
-### <span style="color:DodgerBlue;">Bivariate analysis Section</span>
-</br> 
-The quality of the wine increases along with the alcohol content. There are quite a few outliers with wines having a quality rating of 5. _If_ 5 is the average rating for wine, it wouldn't be too naive to assume that a rating of 5 is the go-to rating for whines where the judge can't place it with confidence. This might be the reason why thre is a higher variance with the wine with a rating of 5. Also, higher quality wine have smaller volatile acidity levels. Another thing I found interesting is that the variance of the alcohol content increases with the quality of the wine, while the variance of the volatile acidity decreses with better quality wine. This might be due to the wine makers being slightly indifferent about the alcohol content of their wines, if it's a good season. 
-
-Using a randomForest model, you can see what the important variables are to help predict quality. Using 500 trees, with replacement, the top 5 features are as follows:
-```{r, echo = F, message=FALSE, warning=F, cache=T}
-rf.Imp <-randomForest(as.factor(quality) ~ . , data = rw[ ,2:13])
-
-gsub('\\.', ' ',row.names(rf.Imp$importance))[order(rf.Imp$importance, decreasing = T)][1:5]
-```
-</br>
-The random forest itself: 
-```{r, echo = F, message=FALSE, warning=F, cache=T}
-rf.Imp
-```
-
-
-
 

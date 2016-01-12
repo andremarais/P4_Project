@@ -1,0 +1,18 @@
+{
+    "contents" : "rw %>%\n  ggplot() + \n  geom_point(aes(x = volatile.acidity, \n                 y = alcohol, \n                 col = as.factor(free.sulfur.dioxide.dv)),\n             alpha = .35) + \n  scale_color_manual(values=c(\"dodgerblue1\", \"firebrick1\")) + \n  facet_grid(quality ~.) + \n  plot.theme + \n  theme(legend.position=\"none\")",
+    "created" : 1452531550479.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "2970739395",
+    "id" : "7EE966A0",
+    "lastKnownWriteTime" : 1,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
