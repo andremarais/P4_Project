@@ -1,0 +1,18 @@
+{
+    "contents" : "library(ggplot2)\n\nredwine <- read.csv('wineQualityReds.csv')\n\nplot.theme <- theme(\n  panel.background = element_rect(fill = \"white\"),\n  plot.background = element_rect(fill = \"white\"),\n\n  panel.grid.major = element_blank(),\n  panel.grid.minor = element_blank(),\n  axis.text.y = element_blank(),\n  axis.ticks.y = element_blank(),\n  axis.title.y = element_blank(),\n  panel.border = element_blank()\n)\n\nggplot(redwine) + \n  geom_histogram(aes(x = fixed.acidity), \n                 col = 'dodgerblue3', \n                 fill = 'dodgerblue1') +\n  plot.theme\n\nggplot(redwine) + \n  geom_histogram(aes(x = volatile.acidity), \n                 col = 'dodgerblue3', \n                 fill = 'dodgerblue1') +\n  plot.theme\n\nggplot(redwine) + \n  geom_histogram(aes(x = citric.acid), \n                 col = 'dodgerblue3', \n                 fill = 'dodgerblue1') +\n  plot.theme\n\nggplot(redwine) + \n  geom_histogram(aes(x = residual.sugar), \n                 col = 'dodgerblue3', \n                 fill = 'dodgerblue1') +\n  scale_x_continuous(limits = c(0, as.numeric(quantile(redwine$residual.sugar,.975)))) + \n  plot.theme\n\n\nggplot(redwine) + \n  geom_histogram(aes(x = chlorides))  +\n  scale_x_continuous(limits = c(0, as.numeric(quantile(redwine$chlorides,.975))))#\n\nggplot(redwine) + \n  geom_histogram(aes(x = free.sulfur.dioxide))\n\nggplot(redwine) + \n  geom_histogram(aes(x = total.sulfur.dioxide))+\n  scale_x_continuous(limits = c(0, as.numeric(quantile(redwine$total.sulfur.dioxide,.975)))) #\n\nggplot(redwine) + \n  geom_histogram(aes(x = density))\n\nggplot(redwine) + \n  geom_histogram(aes(x = pH))\n\nggplot(redwine) + \n  geom_histogram(aes(x = sulphates))+\n  scale_x_continuous(limits = c(0, as.numeric(quantile(redwine$sulphates,.975)))) #\n#\n\nggplot(redwine) + \n  geom_histogram(aes(x = quality))\n\n\n\n\n\n",
+    "created" : 1452080041996.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "454012340",
+    "id" : "44B5F4A7",
+    "lastKnownWriteTime" : 30962664055111796,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
