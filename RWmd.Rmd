@@ -9,19 +9,19 @@ output: html_document
 #### <span style="color:DodgerBlue;">Data overview </span>
 
 <span style="color:DodgerBlue;">Number of data points</span>
-```{r, cache=T,  echo=FALSE,message=F, cache=T}
+```{r nrow, cache=T,  echo=FALSE,message=F, cache=T}
 rw <- read.csv('wineQualityReds.csv')
 nrow(rw)
 ```
 
 <span style="color:DodgerBlue;">Structure of data</span>
-```{r, cache=T,  echo=FALSE,message=F}
+```{r str, cache=T,  echo=FALSE,message=F}
 str(rw)
 ```
 Looks like variable X might just be row numbers. It looks like quality might be rating factors instead of numeric values 
 
 <span style="color:DodgerBlue;">Summary of data</span>
-```{r, cache=T,  echo=FALSE,message=F}
+```{r summary, cache=T,  echo=FALSE,message=F}
 summary(rw)
 ```
 Checking variables X and quality
@@ -32,7 +32,7 @@ plot(rw$X, type = 'l', col = 'dodgerblue3')
 </br>
 <span style="color:DodgerBlue;">Initial observations</span>
 
-Variable **X** and be safely ignored and **quality** can be converted to factors. Most wines have a **quality** rating of 5, with 75% of the wines having a rating of 6 or lower. The mean **alcohol** percentage is 10.42% and the minimum pH is 2.74, which is _very_ acidic. </br>
+Variable X and be safely ignored and quality can be converted to factors. Most wines have a quality rating of 5, with 75% of the wines having a rating of 6 or lower. The mean alcohol percentage is 10.42% and the minimum pH is 2.74, which is _very_ acidic. </br>
 
 ### <span style="color:DodgerBlue;">Basic Plots </span>
 
@@ -53,7 +53,7 @@ plot.theme <- theme(
                  fill = 'dodgerblue1') +
   plot.theme +
   geom_vline(xintercept = 6.75, col = 'dodgerblue3') +
-  geom_vline(xintercept = 8, col = 'dodgerblue3')
+geom_vline(xintercept = 8, col = 'dodgerblue3')
     
 ```
 </br>
@@ -93,7 +93,7 @@ ggplot(rw) +
 </br>
 The residual sugar levels mostly sit around 1.5 and 3. The minimum residual sugar level is 0.9, so all red wines contain at least some sugar
 </br>
-```{r, echo = F, message=FALSE}
+```{r 1, echo = F, message=FALSE}
 ggplot(rw) + 
   geom_histogram(aes(x = chlorides), 
                  col = 'dodgerblue3', 
@@ -123,7 +123,7 @@ ggplot(rw) +
   plot.theme
 ```
 </br>
-There is a peak of free sulfur dioxide levels between 5 and 6. Sulfar dioxide is in general a bad thing in wine (affects the taste and some people are allergic to it). The peak of sulfur dioxide levels might be due to compliance by most wineries with food laws. 
+There is a peak of free sulfur dioxide levels between 5 and 6. Sulphur dioxide is in general a bad thing in wine (affects the taste and some people are allergic to it). The peak of sulfur dioxide levels might be due to compliance by most wineries with food laws. 
 </br>
 
 ```{r, echo = F, message=FALSE}
@@ -134,7 +134,7 @@ ggplot(rw) +
   plot.theme
 ```
 </br>
-Total sulfar dioxide might not be that much more informative than the previous metric, since it's dependent on the amount of wine in the bottle (the taste might be more related to the previous metric as opposed to total sulfar dioxide levels)
+Total sulfur dioxide might not be that much more informative than the previous metric, since it's dependent on the amount of wine in the bottle (the taste might be more related to the previous metric as opposed to total sulfur dioxide levels)
 </br>
 ```{r, echo = F, message=FALSE, warning=F}
   ggplot(rw) + 
@@ -152,7 +152,7 @@ ggplot(rw) +
   plot.theme
 ```
 </br>
-The density and pH histograms look like they might come from a normal distribution. Surprisingly, the Shapiro test for normality show that they don't. The p-value for the Shapiro test for both of these metrics are far less than 0.05. The null hypothesis for the Spapiro states that the values come from a normal distribution, while the alternative is that the values do _not_ come from a normal distribution. With a p-value of less than 0.05 we can reject that null hypothesis in favor of the alternative. The p-value for density: `r formatC(shapiro.test(rw$density)$p.value,digits=10,format="f")` and for pH: `r formatC(shapiro.test(rw$pH)$p.value,digits=10,format="f")`
+The density and pH histograms look like they might come from a normal distribution. Surprisingly, the Shapiro test for normality show that they don't. The p-value for the Shapiro test for both of these metrics are far less than 0.05. The null hypothesis for the Shapiro states that the values come from a normal distribution, while the alternative is that the values do _not_ come from a normal distribution. With a p-value of less than 0.05 we can reject that null hypothesis in favor of the alternative. The p-value for density: `r formatC(shapiro.test(rw$density)$p.value,digits=10,format="f")` and for pH: `r formatC(shapiro.test(rw$pH)$p.value,digits=10,format="f")`
 </br>
 
 ```{r, echo = F, message=FALSE}
@@ -198,14 +198,12 @@ As stated previously, it might be more meaningful to treat the quality values as
 ### <span style="color:DodgerBlue;">Univariate analysis </span>
 #### <span style="color:DodgerBlue;">Data overview </span>
 </br>
-The red wine data set has 1,599 data points, with 13 features (of which we can ignore one, namely **X**). All but one feature are numeric values - **quality** was converted to factors. Only a few features are easy to judge in terms of scale (ie is lower better?). 
+The red wine data set has 1,599 data points, with 13 features (of which we can ignore one, namely X). All but one feature are numeric values - quality was converted to factors. Only a few features are easy to judge in terms of scale (ie is lower better?). 
 </br>
 </br>
-A few things I found interesting were the peak values for some features, which _might_ be due to legislation in some countries. Feature like **free sulfar dioxide**, **pH** and **alcohol** have definate peaks. While it's not possible to determine whether it really is due to legislation or just coincidental, it will be interesting to see if it has an effect on the wine itself. I created three new dummy variables to indicate whether the wine is above (1) or beneath (0) the peak value for **free sulfar dioxide**, **pH** and **alcohol** individually. The peak values for these values are `r names(table(rw$free.sulfur.dioxide))[order(table(rw$free.sulfur.dioxide), decreasing = T)[1]]`, `r names(table(rw$pH))[order(table(rw$pH), decreasing = T)[1]]` and `r names(table(rw$alcohol))[order(table(rw$alcohol), decreasing = T)[1]]` respectively.
+A few things I found interesting were the peak values for some features, which _might_ be due to legislation in some countries. Feature like free sulfur dioxide, pH and alcohol have definite peaks. While it's not possible to determine whether it really is due to legislation or just coincidental, it will be interesting to see if it has an effect on the wine itself. I created three new dummy variables to indicate whether the wine is above (1) or beneath (0) the peak value for free sulfur dioxide, pH and alcohol individually. The peak values for these values are `r names(table(rw$free.sulfur.dioxide))[order(table(rw$free.sulfur.dioxide), decreasing = T)[1]]`, `r names(table(rw$pH))[order(table(rw$pH), decreasing = T)[1]]` and `r names(table(rw$alcohol))[order(table(rw$alcohol), decreasing = T)[1]]` respectively.
 </br>
-</br>
-I'm curious to see how the sulphate and alcohol levels affect the quality of the wine. Citric accid and sugar content might boil down to personal preference, but I'll investigat the relation between those variables and the quality of the wine just the same. 
-</br>
+I'm curious to see how the sulphate and alcohol levels affect the quality of the wine. Citric acid and sugar content might boil down to personal preference, but I'll investigate the relation between those variables and the quality of the wine just the same. 
 </br>
 
 
@@ -216,151 +214,209 @@ library(corrplot)
 library(magrittr)
 
 ### function to create dummy variables 
-dv.function <- function(x) {
-  sapply(x, function(y) 
-    if (y > (x %>% table %>% names %>% as.numeric)
-        [(x %>% table %>% order(decreasing = T))[1]]) 1 else 0)
-}
-
-rw$free.sulfur.dioxide.dv <- dv.function(rw$free.sulfur.dioxide)
-rw$ph.dv <- dv.function(rw$pH)
-rw$alcohol.dv <- dv.function(rw$alcohol)
+# dv.function <- function(x) {
+#   sapply(x, function(y) 
+#     if (y > (x %>% table %>% names %>% as.numeric)
+#         [(x %>% table %>% order(decreasing = T))[1]]) 1 else 0)
+# }
+# 
+# rw$free.sulfur.dioxide.dv <- dv.function(rw$free.sulfur.dioxide)
+# rw$ph.dv <- dv.function(rw$pH)
+# rw$alcohol.dv <- dv.function(rw$alcohol)
 
 corrplot(cor(rw[ ,2:13]), type = 'lower')
 ```
 </br>
-A larger more opaque circle indicates a more significant correlation. Blue indicates a positive correlation while red indicates a negative correlation. From the graph above we can see it's worthwhile to look at the link between **alcohol** levels vs **quality** and **volatile acidity** vs quality. Other variables we can look at include **density** vs **alcohol** and **density** vs **fixed acidity**. It's interesting to note that the sulphate levels don't correlate much with non-sulphate features. 
+A larger more opaque circle indicates a more significant correlation. Blue indicates a positive correlation while red indicates a negative correlation. From the graph above we can see it's worthwhile to look at the link between quality and alcohol, volatile acidity and sulphates levels. Other variables we can look at include density vs alcohol and density vs fixed acidity. It's interesting to see there isn't a strong correlation between the sulphur features and quality, which is strange. Will investigate this further.
 </br>
 
-```{r, echo = F, message=FALSE}
+```{r quality vs alcohol, echo = F, message=FALSE}
 ggplot(rw) + geom_boxplot(aes(x = as.factor(quality), 
                               y = alcohol), 
                           outlier.colour ='firebrick1',
                           col = 'dodgerblue3',
                           fill = 'dodgerblue1') + 
   plot.theme + xlab('Quality') + 
-  ggtitle('Quality vs Alcohol')
+  ggtitle('Quality vs alcohol')
 ```
 </br>
 Note the amount of outliers (red dots) for wine which has a quality rating of 5. 
 </br>
-```{r, echo = F, message=FALSE}
+```{r quality vs sulphates, echo = F, message=FALSE}
 ggplot(rw) + geom_boxplot(aes(x = as.factor(quality), 
                               y = sulphates), 
                           outlier.colour ='firebrick1',
                           col = 'dodgerblue3',
                           fill = 'dodgerblue1') + 
-  plot.theme + xlab('Quality') + 
-  ggtitle('Quality vs Alcohol')
+  plot.theme + 
+  ggtitle('Quality vs sulphates')
 ```
 </br>
 Once again a lot of outliers with wine which has a quality rating of 5.
 </br>
-```{r, echo = F, message=FALSE}
+```{r quality vs volatilie acidity, echo = F, message=FALSE}
 ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
                               y = volatile.acidity), 
                           outlier.colour ='firebrick1',
                           col = 'dodgerblue3', 
                           fill = 'dodgerblue1') + 
-  plot.theme + xlab('Quality') + 
-  ggtitle('Quality vs Volatile acidity')
+  plot.theme + 
+  ggtitle('Quality vs volatile acidity')
 ```
 </br>
 And again, there seems to be quite a few outliers with higher quality wines. 
 </br>
-```{r, echo = F, message=FALSE}
+Because there is a strong correlation between alcohol and density, I'm going to check out the link between quality and density as well
+</br>
+```{r quality vs density, echo = F, message=FALSE}
 ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
                               y = density), 
                           outlier.colour ='firebrick1',
                           col = 'dodgerblue3', 
                           fill = 'dodgerblue1') + 
-  plot.theme + xlab('Quality') + 
-  ggtitle('Quality vs Volatile acidity')
+  plot.theme + 
+  ggtitle('Quality vs density')
 ```
 </br>
-No clear link between quality and density.
+Looks like there might be a link between quality and density 
 </br>
-```{r, echo = F, message=FALSE}
-
+```{r quality vs chlorides, echo = F, message=FALSE}
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
+                              y = chlorides), 
+                          outlier.colour ='firebrick1',
+                          col = 'dodgerblue3', 
+                          fill = 'dodgerblue1') + 
+  plot.theme + 
+  ggtitle('Quality vs chlorides')
+```
+</br>
+Doesn't look promising.
+</br>
+```{r quality vs citric.acid, echo = F, message=FALSE}
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
+                              y = citric.acid), 
+                          outlier.colour ='firebrick1',
+                          col = 'dodgerblue3', 
+                          fill = 'dodgerblue1') + 
+  plot.theme + 
+  ggtitle('Quality vs citric acid')
+```
+</br>
+Looks like there is a good link between quality and citric acid levels.
+</br>
+```{r Sulphates vs alcohol, echo = F, message=FALSE}
+ggplot(rw) + 
+  geom_point(aes(x = sulphates, 
+                 y = alcohol),
+             col = 'dodgerblue3') + 
+  plot.theme + 
+  ggtitle('Sulphates vs alcohol') +
+  geom_smooth(aes(x = sulphates, 
+                  y = alcohol), 
+              method = "lm", 
+              se = F, 
+              col = 'firebrick1', 
+              size = 1) 
+```
+</br>
+Such a low correlation level `r cor(rw$sulphates, rw$alcohol)` means the features aren't redundant. For modelling purposes it means we can use both features.
+</br>
+```{r Sulphates vs volatile acidity, echo = F, message=FALSE}
+ggplot(rw) + 
+  geom_point(aes(x = sulphates, 
+                 y = volatile.acidity),
+             col = 'dodgerblue3') + 
+  plot.theme + 
+  ggtitle('Sulphates vs volatile acidity') +
+  geom_smooth(aes(x = sulphates, 
+                  y = volatile.acidity), 
+              method = "lm", 
+              se = F, 
+              col = 'firebrick1', 
+              size = 1) 
+```
+</br>
+Not a weak correlation `r cor(rw$sulphates, rw$volatile.acidity)`, will have to see if this contributes to the accuracy of the model. 
+</br>
+```{r Alcohol vs volatile acidity, echo = F, message=FALSE}
+ggplot(rw) + 
+  geom_point(aes(x = alcohol, 
+                 y = volatile.acidity),
+             col = 'dodgerblue3') + 
+  plot.theme + 
+  ggtitle('Alcohol vs volatile acidity') +
+  geom_smooth(aes(x = alcohol, 
+                  y = volatile.acidity), 
+              method = "lm", 
+              se = F, 
+              col = 'firebrick1', 
+              size = 1) 
+```
+</br>
+A weak correlation `r cor(rw$alcohol, rw$volatile.acidity)`, might be valuable the model. 
+</br>
+```{r Density vs alcohol, echo = F, message=FALSE, warning=F}
 ggplot(rw) + 
   geom_point(aes(x = density, 
                  y = alcohol),
              col = 'dodgerblue3') + 
   plot.theme + 
   ggtitle('Density vs alcohol') +
-  geom_smooth(aes(x = density, y = alcohol), 
-              method = "lm", 
-              se = F, 
-              col = 'firebrick1', 
-              size = 1) 
-```
-</br>
-The straight line is regression line, the descending slope shows the negative correlation. 
-</br>
-```{r, echo = F, message=FALSE}
-ggplot(rw) + 
-  geom_point(aes(x = density, 
-                 y = fixed.acidity),
-             col = 'dodgerblue3') + 
-  plot.theme + 
-  ggtitle('Density vs fixed acidity') +
   geom_smooth(aes(x = density, 
-                  y = fixed.acidity), 
+                  y = alcohol), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
-              size = 1) 
+              size = 1)
 ```
 </br>
-In this case the ascending regression line show the positive correlation between the density and fixed acidity of red wine. 
+A stronger negative correlation `r cor(rw$alcohol, rw$density)`, will have to see if this adds value to the model. 
 </br>
-```{r, echo = F, message=FALSE}
+```{r Sulphates vs sulphates, echo = F, message=FALSE, warning=F}
 ggplot(rw) + 
-  geom_point(aes(x = pH, 
-                 y = fixed.acidity),
+  geom_point(aes(x = sulphates, 
+                 y = chlorides),
              col = 'dodgerblue3') + 
   plot.theme + 
-  ggtitle('pH vs fixed acidity') +
-  geom_smooth(aes(x = pH, y = 
-                    fixed.acidity), 
+  ggtitle('Sulphates vs sulphates') +
+  geom_smooth(aes(x = sulphates, 
+                  y = chlorides), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
-              size = 1) 
+              size = 1)
 ```
-```{r, echo = F, message=FALSE, warning=F}
+</br>
+A stronger correlation `r cor(rw$sulphates, rw$chlorides)`, but not high enough to consider ignoring this feature.
+</br>
+
+```{r volatile acidity vs citric acid, echo = F, message=FALSE, warning=F}
 ggplot(rw) + 
-  geom_point(aes(x = pH, y = citric.acid),
+  geom_point(aes(x = volatile.acidity, 
+                 y = citric.acid),
              col = 'dodgerblue3') + 
   plot.theme + 
-  ggtitle('pH vs citric acid') +
-  geom_smooth(aes(x = pH, 
+  ggtitle('volatile acidity vs citric acid') +
+  geom_smooth(aes(x = volatile.acidity, 
                   y = citric.acid), 
               method = "lm", 
               se = F, 
               col = 'firebrick1', 
-              size = 1) +
-  scale_y_continuous(limits = c(0, max(rw$citric.acid)))
+              size = 1)+
+  scale_y_continuous(limits = c(0, max(rw$citric.acid)*1.1))
 ```
 </br>
-
+A relatively strong negative correlation `r cor(rw$volatile.acidity, rw$citric.acid)`, will have to see if this is worthwhile.
+</br>
 
 
 ### <span style="color:DodgerBlue;">Bivariate analysis</span>
 </br> 
-The quality of the wine increases along with higher alcohol content and lower volatile acidity levels. There are quite a few alcohol outliers with wines having a quality rating of 5. _If_ 5 is the average rating for wine, it wouldn't be too naive to assume that a rating of 5 is the go-to rating for wines where the judge can't place it with confidence. This might be the reason why there is a higher variance with the wine with a rating of 5. Also, higher quality wine have smaller volatile acidity levels. Another thing I found interesting is that the variance of the alcohol content increases with the quality of the wine, while the variance of the volatile acidity decreases with better quality wine. This might be due to the wine makers being slightly indifferent about the alcohol content with their wines, and being more concerned about _making a good wine._
-
-Using a random forest model, you can see what the important variables are to help predict quality. Using 500 trees, with replacement, the top 6 features are as follows:
-```{r, echo = F, message=FALSE, warning=F, cache=T}
-rf.Imp <-randomForest(as.factor(quality) ~ . , data = rw[ ,2:13])
-
-gsub('\\.', ' ',row.names(rf.Imp$importance))[order(rf.Imp$importance, decreasing = T)][1:6]
-```
+The quality of the wine increases along with higher alcohol content and lower volatile acidity levels. There are quite a few alcohol outliers with wines having a quality rating of 5. _If_ 5 is the average rating for wine, it wouldn't be too naive to assume that a rating of 5 is the go-to rating for wines where the judge can't place it with confidence. This might be the reason why there is a higher variance with the wine with a rating of 5. 
 </br>
-The random forest itself: 
-```{r, echo = F, message=FALSE, warning=F, cache=T}
-rf.Imp
-```
+</br>
+I want to see if I can build a model which can predict the quality of a wine, based on the given features. The features which seem most useful for now include alcohol, sulphates and volatile acidity. Density, chloride and citric acid might also be useful, but they are quite correlated with alcohol, sulphates and volatile acidity respectively. 
+</br>
 
 
 ### <span style="color:DodgerBlue;">Multivariate plots</span>
@@ -375,16 +431,13 @@ ggplot(rw) +
   plot.theme
 ```
 </br>
-It looks the alcohol variance is much lower with lower quality wines. 
+It looks the alcohol variance is much higher with higher quality wines. 
 </br>
-```{r, echo = F, message=FALSE, warning=F}
-tapply(rw$alcohol, rw$quality, summary)
-```
 ```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, alcohol ~ quality, FUN = var)
 ```
 </br>
-The variance in fact higer with the better quality wines. 
+The variance in fact higher with the better quality wines. 
 </br>
 ```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, alcohol ~ quality, FUN = var) %>% 
@@ -404,10 +457,6 @@ aggregate(data = rw, alcohol ~ quality, FUN = var) %>%
               col = 'firebrick1', 
               size = 1)
 ```
-</br>
-```{r, echo = F, message=FALSE, warning=F}
-tapply(rw$volatile.acidity, rw$quality, summary)
-```
 ```{r, echo = F, message=FALSE, warning=F}
 aggregate(data = rw, volatile.acidity ~ quality, FUN = var)
 ```
@@ -422,74 +471,301 @@ aggregate(data = rw, volatile.acidity ~ quality, FUN = var) %>%
                 y = volatile.acidity), 
             col = 'dodgerblue3')+
   plot.theme +
-  geom_smooth(aes(x = quality, y = volatile.acidity), 
+  geom_smooth(aes(x = quality, 
+                  y = volatile.acidity), 
               se = F, 
               method = 'lm', 
               col = 'firebrick1', 
               size = 1)
 ```
 </br>
-```{r, echo = F, message=FALSE, warning=F}
+Volatile acidity's variance decrease with higher quality wines. 
+</br>
+```{r sulphates vs alcohol vs quality, echo = F, message=FALSE, warning=F}
 ggplot(rw) + 
-  geom_point(aes(x = density, 
-                 y = total.sulfur.dioxide, 
-                 col = as.factor(alcohol.dv)),
-                 alpha = .35) + 
-  scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
-  facet_grid(quality ~.) + 
-  plot.theme + 
-  theme(legend.position="none")
+  geom_point(aes(x = sulphates, 
+                 y = alcohol), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  geom_smooth(aes(x = sulphates, 
+                  y = alcohol), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1)+
+  plot.theme
 ```
 </br>
-The two outliers in the second last plot shrinks the results too much, taking then out...
+The variance differ quite significantly between the different qualities
+</br>
+
+
+
+```{r, echo = F, message=FALSE, warning=F, cache = T}
+qualities <- unique(rw$quality)[order(unique(rw$quality))]
+for (i in qualities) {
+  print(paste('Quality:', i, 
+              '|', 
+              'correlation: ', 
+              round(cor(rw[rw$quality == i, 'sulphates'],
+                  rw[rw$quality == i, 'alcohol']
+                  ),6), sep = ''))
+}
+
+```
+</br>
+Significant correlation only appears at qualities with small samples.
+</br>
+```{r sulphates vs volatile.acidity vs quality, echo = F, message=FALSE, warning=F}
+ggplot(rw) + 
+  geom_point(aes(x = sulphates, 
+                 y = volatile.acidity), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  geom_smooth(aes(x = sulphates, 
+                  y = volatile.acidity), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1)+
+  plot.theme
+```
+</br>
+Correlations seems quite constant between different qualities
+</br>
+```{r, echo = F, message=FALSE, warning=F, cache = T}
+qualities <- unique(rw$quality)[order(unique(rw$quality))]
+for (i in qualities) {
+  print(paste('Quality:', i, 
+              '|', 
+              'correlation: ', 
+              round(cor(rw[rw$quality == i, 'sulphates'],
+                  rw[rw$quality == i, 'volatile.acidity']
+                  ),6), sep = ''))
+}
+
+```
+</br>
+Barring quality 3, they tend to stay constant. 
+</br>
+```{r alcohol vs density vs quality , echo = F, message=FALSE, warning=F}
+ggplot(rw) + 
+  geom_point(aes(x = alcohol, 
+                 y = density), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  plot.theme + 
+  geom_smooth(aes(x = alcohol, 
+                  y = density), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1)
+```
+</br>
+Correlations seem to be quite constant. 
 </br>
 ```{r, echo = F, message=FALSE, warning=F}
-# indenting with magrittr is still tricky
-rw %>%
-subset(rw %$%
-         total.sulfur.dioxide < rw %$% 
-         total.sulfur.dioxide %>% 
-         quantile(.975) %>% 
-         as.numeric) %>%
-ggplot() + 
-  geom_point(aes(x = density, 
-                 y = total.sulfur.dioxide, 
-                 col = as.factor(alcohol.dv)),
+for (i in qualities) {
+  print(paste('Quality:', i, 
+              '|', 
+              'correlation: ', 
+              round(cor(rw[rw$quality == i, 'alcohol'],
+                  rw[rw$quality == i, 'density']
+                  ),6), sep = ''))
+}
+```
+</br>
+Indeed it is higher. 
+</br>
+```{r sulphates vs chlorides vs quality , echo = F, message=FALSE, warning=F}
+ggplot(rw) + 
+  geom_point(aes(x = sulphates, 
+                 y = chlorides), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  plot.theme + 
+  geom_smooth(aes(x = sulphates, 
+                  y = chlorides), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1)
+```
+</br>
+Correlations seem to be quite constant. 
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+for (i in qualities) {
+  print(paste('Quality:', i, 
+              '|', 
+              'correlation: ', 
+              round(cor(rw[rw$quality == i, 'sulphates'],
+                  rw[rw$quality == i, 'chlorides']
+                  ),6), sep = ''))
+}
+```
+</br>
+Heavy variation betwen the different qualities. 
+</br>
+```{r volatile.acidity vs citric.acid vs quality , echo = F, message=FALSE, warning=F}
+ggplot(rw) + 
+  geom_point(aes(x = volatile.acidity, 
+                 y = citric.acid), 
+             col = 'dodgerblue1') + 
+  facet_grid(.~quality) + 
+  plot.theme + 
+  geom_smooth(aes(x = volatile.acidity, 
+                  y = citric.acid), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1) +
+  scale_y_continuous(limits = c(0, max(rw$citric.acid)*1.1))
+```
+</br>
+
+```{r, echo = F, message=FALSE, warning=F}
+for (i in qualities) {
+  print(paste('Quality:', i, 
+              '|', 
+              'correlation: ', 
+              round(cor(rw[rw$quality == i, 'volatile.acidity'],
+                  rw[rw$quality == i, 'citric.acid']
+                  ),6), sep = ''))
+}
+```
+</br>
+Correlations seem to be quite constant. 
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+ggplot(rw) +
+  geom_point(aes(x = fixed.acidity, y = pH, col = citric.acid), size = 3, alpha = .5) +
+  scale_color_gradient(low = 'dodgerblue1', high = 'firebrick1') + plot.theme
+```
+</br>
+Really not a surprise to see the high correlation between pH, fixed acidity and citric acid levels.
+</br>
+```{r, echo = F, message=FALSE, warning=F}
+ggplot(rw) +
+  geom_point(aes(x = density, y = fixed.acidity, col = alcohol), size = 3, alpha = .5) +
+  scale_color_gradient(low = 'dodgerblue1', high = 'firebrick1') + plot.theme
+```
+</br>
+Strong correlation between density and fixed acidity. A blue shift (lower alcohol) with higher density levels.
+</br>
+
+
+### <span style="color:DodgerBlue;">Multivariate analysis</span>
+
+
+</br>
+It looks like alcohol, sulphates and volatile acidity can be good predictors for quality. It's worthwhile to see if density, chlorides and citric acid improves the accuracy of the model. Linear models require a continuous response variable, so using quality as a factor is not possible. Instead, I'll use quality as a numeric value, and round the predicted value to the closest integer instead. I doubt it will be accurate, but it's worth a shot anyways.
+</br>
+
+```{r lm using alcohol + sulphates + volatile.acidity, echo = F, message=FALSE, warning=F}
+rw.lm <- lm(data = rw, quality ~  alcohol + sulphates + volatile.acidity)
+pred.corr <- round(predict(rw.lm, rw),0) == rw$quality
+table(pred.corr)
+sum(pred.corr) / length(pred.corr)
+```
+</br>
+58% of the wines were predicted accurately only using alcohol, sulphates and volatile acidity
+</br>
+
+```{r lm alcohol + sulphates + volatile.acidity  + chlorides + citric.acid + density, echo = F, message=FALSE, warning=F}
+rw.lm <- lm(data = rw, quality ~  alcohol + sulphates + volatile.acidity  + chlorides + citric.acid + density)
+pred.corr <- round(predict(rw.lm, rw),0) == rw$quality
+table(pred.corr)
+sum(pred.corr) / length(pred.corr)
+```
+</br>
+By including chlorides, citric.acid and density, the accuracy only improved by 1% to 59%
+</br>
+```{r random forest, echo = F, message=FALSE, warning=F}
+library(randomForest)
+rw.rf <- randomForest(data = rw, as.factor(quality) ~  alcohol + sulphates + volatile.acidity  + chlorides + citric.acid+ density)
+pred.corr <- rw.rf$predicted == rw$quality
+table(pred.corr)
+sum(pred.corr) / length(pred.corr)
+```
+</br>
+Comparing this to a Random Forest model, it's quite shocking to see how far we are from a good model. Using a linear model was bit of a long shot, but I don't think it performed too poorly.
+</br>
+
+
+### <span style="color:DodgerBlue;">Final Plots and Summary</span>
+#### Plot one
+
+```{r final plots, echo = F, message=FALSE, warning=F}
+ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
+                              y = alcohol), 
+                          outlier.colour ='firebrick1',
+                          col = 'dodgerblue3', 
+                          fill = 'dodgerblue1') + 
+  ggtitle('Alcohol content wines of each quality rating\n') +
+  xlab('Alcohol content') +
+  ylab('Quality') +
+  theme(
+    panel.background = element_rect(fill = "white", color = 'dodgerblue1'),
+    plot.background = element_rect(fill = "white"),
+    panel.grid.major = element_line(colour ='azure3'),
+    panel.grid.minor = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank(),
+    axis.text= element_text(size = 10),
+    axis.title = element_text(size = 15),
+    plot.title = element_text(size = 20)
+    )
+  
+
+
+
+ggplot(rw) + 
+  geom_point(aes(x = alcohol, 
+                 y = density), 
+             col = 'dodgerblue1',
+             size = 5,
              alpha = .35) + 
-  scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
-  facet_grid(quality ~.) + 
-  plot.theme + 
-  theme(legend.position="none")
-```
-</br>
-Blue dots refer to wines with an alcohol level beneath the mode, while red dots are for wines with an alcohol level above the mode. 
-</br>
-```{r, echo = F, message=FALSE, warning=F}
-# indenting with magrittr is still tricky
-rw %>%
-subset(rw %$%
-         total.sulfur.dioxide < rw %$% 
-         total.sulfur.dioxide %>% 
-         quantile(.975) %>% 
-         as.numeric) %>%
-ggplot() + 
-  geom_point(aes(x = density, 
-                 y = total.sulfur.dioxide, 
-                 col = as.factor(ph.dv)),
-             alpha = .35) + 
-  scale_color_manual(values=c("dodgerblue1", "firebrick1")) + 
-  facet_grid(quality ~.) + 
-  plot.theme + 
-  theme(legend.position="none")
-```
-</br>
+  facet_grid(.~quality) + 
+  geom_smooth(aes(x = alcohol, 
+                  y = density), 
+              se = F, 
+              method = 'lm', 
+              col = 'firebrick1', 
+              size = 1,
+              alpha = .25) +
+  ggtitle('Alcohol vs. density over each quality rating\n\nQuality') +
+  xlab('Alcohol content') +
+  ylab('Density') +
+  theme(
+    panel.background = element_rect(fill = "white", color = 'dodgerblue1'),
+    plot.background = element_rect(fill = "white"),
+    panel.grid.major = element_line(colour ='azure3'),
+    panel.grid.minor = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank(),
+    axis.text= element_text(size = 10),
+    axis.title = element_text(size = 15),
+    plot.title = element_text(size = 20)
+  )
 
-</br>
-```{r, echo = F, message=FALSE, warning=F}
-aggregate(data = rw, density ~ alcohol.dv, FUN = var)
+
+ggplot(rw) +
+  geom_point(aes(x = fixed.acidity, y = pH, col = citric.acid), size = 3, alpha = .5) +
+  scale_color_gradient(low = 'dodgerblue1', high = 'firebrick1', name = "Citric acid") +
+  ggtitle('pH by fixed acidity and citric acid levels') +
+  xlab('Fixed acidity') +
+  ylab('pH') +
+  theme(
+    panel.background = element_rect(fill = "white", color = 'dodgerblue1'),
+    plot.background = element_rect(fill = "white"),
+    panel.grid.major = element_line(colour ='azure3'),
+    panel.grid.minor = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank(),
+    axis.text= element_text(size = 10),
+    axis.title = element_text(size = 15),
+    plot.title = element_text(size = 20)
+  ) 
 ```
-</br>
-Comparing the density and total sulfar dioxide between the wine above and below the mode, you can see the variance of the density is much higher with wines with an alcohol above the mode. The other derived variables unfortunately add no new information.
-
-</br>
-
