@@ -697,7 +697,7 @@ Comparing this to a Random Forest model, it's quite shocking to see how far we a
 ### <span style="color:DodgerBlue;">Final Plots and Summary</span>
 #### Plot one
 
-```{r final plots, echo = F, message=FALSE, warning=F}
+```{r final plot1, echo = F, message=FALSE, warning=F}
 ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
                               y = alcohol), 
                           outlier.colour ='firebrick1',
@@ -717,10 +717,14 @@ ggplot(rw) + geom_boxplot(aes(x = as.factor(quality),
     axis.title = element_text(size = 15),
     plot.title = element_text(size = 20)
     )
-  
+```
+
+
+#### Description one
 
 
 
+```{r final plot1, echo = F, message=FALSE, warning=F}
 ggplot(rw) + 
   geom_point(aes(x = alcohol, 
                  y = density), 
