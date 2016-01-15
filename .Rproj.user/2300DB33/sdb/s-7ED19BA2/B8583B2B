@@ -1,0 +1,18 @@
+{
+    "contents" : "ggplot(rw) + \n  geom_point(aes(x = density, \n                 y = alcohol),\n             col = 'dodgerblue3',\n             alpha = .75) + \n  plot.theme + \n  ggtitle('Density vs alcohol') +\n  geom_smooth(aes(x = density, \n                  y = alcohol), \n              method = \"lm\", \n              se = F, \n              col = 'firebrick1', \n              size = 1)",
+    "created" : 1452673249732.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "2675746751",
+    "id" : "B8583B2B",
+    "lastKnownWriteTime" : 21673912514183252,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
